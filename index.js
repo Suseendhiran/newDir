@@ -1,6 +1,16 @@
-const express = require("express");
+import express from "express";
+import { MongoClient } from "mongodb";
 const app = express();
 app.listen(4000);
+app.use(express.json());
+const MONGO_URL = "mongodb://localhost";
+async function createConnection() {
+  const client = new MongoClient(MONGO_URL);
+  await client.connect();
+  console.log("Connected");
+  return client;
+}
+const client = await createConnection();
 app.get("/", (req, res) => {
   res.send("Express started");
 });
@@ -73,27 +83,52 @@ const celebs = [
     country: "america",
   },
 ];
-app.get("/celebs", (req, res) => {
-  const { gender, country } = req.query;
-  let query = req.query;
-  let queryKeys = Object.keys(req.query);
-  console.log(gender);
-  console.log("Keyss", Object.keys(req.query));
-  const celebDetails = gender
-    ? celebs.filter((item) => {
-        return queryKeys.every((key) => item[[key]] === query[key]);
-      })
-    : celebs;
-  //console.log(gender, celebDetails);
-  console.log("found", celebDetails);
+async function findQueryFilter(filters) {
+  console.log("filters", filters);
+  let filterObject = { ...filters };
+  if (Object.keys(filters).length) {
+    return await client
+      .db("guvi")
+      .collection("celebs")
+      .find({ ...filterObject })
+      .toArray();
+  } else {
+    return await client.db("guvi").collection("celebs").find({}).toArray();
+  }
+}
+app.get("/celebs", async (req, res) => {
+  // console.log("mongo", client);
+
+  // let query = req.query;
+  // let queryKeys = Object.keys(req.query);
+  // const celebDetails = queryKeys.length
+  //   ? celebrities.filter((item) => {
+  //       return queryKeys.every((key) => item[[key]] === query[key]);
+  //     })
+  //   : celebrities;
+  const celebDetails = await findQueryFilter(req.query);
   celebDetails.length
     ? res.send(celebDetails)
     : res.status(404).send({ message: "No celebs found" });
-  //res.send(celebDetails);
 });
-app.get("/celeb/:id", (req, res) => {
+app.post("/celebs", async (req, res) => {
+  const data = req.body;
+  //console.log("recievd", data);
+  const mongoRes = await client
+    .db("guvi")
+    .collection("celebs")
+    .insertMany(data);
+  res.send(mongoRes);
+});
+app.get("/celeb/:id", async (req, res) => {
   const { id } = req.params;
-  const celebDetails = celebs.find((item, celebId) => item.id === id);
+  const celebDetails = await client
+    .db("guvi")
+    .collection("celebs")
+    .find({ id: id })
+    .toArray();
+  //console.log("ones", one);
+  //const celebDetails = celebs.find((item, celebId) => item.id === id);
   celebDetails
     ? res.send(celebDetails)
     : res.status(404).send({ message: "No such data found" });
