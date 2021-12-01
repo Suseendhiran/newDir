@@ -6,7 +6,7 @@ dotenv.config();
 
 export const app = express();
 
-app.listen(4000);
+app.listen(process.env.PORT);
 app.use(express.json());
 
 //const MONGO_URL = "mongodb://localhost";
