@@ -47,7 +47,7 @@ router
   .get(async (req, res) => {
     const { id } = req.params;
     const celebDetails = await getCelebById(id);
-    //console.log("ones", one);
+    // console.log("ones", id, celebDetails);
     //const celebDetails = celebs.find((item, celebId) => item.id === id);
     celebDetails
       ? res.send(celebDetails)
@@ -62,6 +62,7 @@ router
   })
   .put(async (req, res) => {
     const { id } = req.params;
+    //console.log("updateid", id, req.body);
     const mongoResponse = await updateCelebById(id, req);
     if (mongoResponse.modifiedCount > 0) {
       let updatedRecord = await getCelebById(id);
