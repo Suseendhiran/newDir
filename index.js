@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+import cors from "cors";
 import { CelebsRouter } from "./Routers/CelebsRouter.js";
 dotenv.config();
 
@@ -8,6 +9,7 @@ export const app = express();
 
 app.listen(process.env.PORT);
 app.use(express.json());
+app.use(cors());
 
 //const MONGO_URL = "mongodb://localhost";
 
