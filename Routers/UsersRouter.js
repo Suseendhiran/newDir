@@ -14,7 +14,7 @@ router.route("/signup").post(async (req, res) => {
   console.log("userdetails", req.body);
   const { userName, password } = req.body;
   const checkUserAlreadyExist = await getUserByUserName(userName);
-  console.log("user presence", checkUserAlreadyExist);
+
   if (checkUserAlreadyExist) {
     res.status(401).send({ message: "Username already exists" });
     return;
@@ -24,7 +24,11 @@ router.route("/signup").post(async (req, res) => {
     ...req.body,
     password: hashedPassword,
   });
-  res.send(mongoResponse);
+  if (mongoResponse.acknowledged) {
+    const createdUser = await getUserByUserName(userName);
+    const token = jwt.sign({ id: createdUser._id }, process.env.JWT_KEY);
+    res.send({ message: "SignUp successfull", token: token });
+  }
 });
 router.route("/login").post(async (req, res) => {
   const { userName, password } = req.body;
