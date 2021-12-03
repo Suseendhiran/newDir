@@ -1,6 +1,7 @@
 import { getCelebById, deleteCelebById, updateCelebById } from "../helper.js";
-import { client, app } from "../index.js";
+import { client } from "../index.js";
 import express from "express";
+import { auth } from "../Middleware/auth.js";
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router
     const mongoRes = await client
       .db("guvi")
       .collection("celebs")
-      .insertMany(data);
+      .insertOne(data);
     res.send(mongoRes);
   });
 router

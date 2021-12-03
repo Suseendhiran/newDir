@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import cors from "cors";
 import { CelebsRouter } from "./Routers/CelebsRouter.js";
+import { usersRouter } from "./Routers/UsersRouter.js";
 dotenv.config();
 
 export const app = express();
@@ -27,3 +28,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/celebs", CelebsRouter);
+app.use("/users", usersRouter);
