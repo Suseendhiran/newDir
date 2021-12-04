@@ -60,7 +60,7 @@ router
     const { id } = req.params;
     const mongoResponse = await deleteCelebById(id);
 
-    res.send(mongoResponse, {
+    res.send({
       message: "Celebrity Successfully Deleted",
     });
   })
