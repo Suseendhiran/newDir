@@ -26,7 +26,10 @@ router.route("/signup").post(async (req, res) => {
   });
   if (mongoResponse.acknowledged) {
     const createdUser = await getUserByUserName(userName);
-    const token = jwt.sign({ id: createdUser._id }, process.env.JWT_KEY);
+    const token = jwt.sign(
+      { id: createdUser._id, userName: createdUser.userName },
+      process.env.JWT_KEY
+    );
     res.send({ message: "SignUp successfull", token: token });
   }
 });
@@ -39,8 +42,15 @@ router.route("/login").post(async (req, res) => {
   }
   const matchpassword = bcrypt.compare(password, userDetails.password);
   if (matchpassword) {
-    const token = jwt.sign({ id: userDetails._id }, process.env.JWT_KEY);
-    res.send({ message: "Successfull login", token: token });
+    const token = jwt.sign(
+      { id: userDetails._id, userName: userDetails.userName },
+      process.env.JWT_KEY
+    );
+    res.send({
+      message: "Successfull login",
+      token: token,
+      id: userDetails._id,
+    });
   } else {
     res.status(401).send({ message: "Invalid credentials" });
   }

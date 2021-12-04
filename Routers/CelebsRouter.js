@@ -20,7 +20,7 @@ async function findQueryFilter(filters) {
 }
 router
   .route("/")
-  .get(async (req, res) => {
+  .get(auth, async (req, res) => {
     // console.log("mongo", client);
     // let query = req.query;
     // let queryKeys = Object.keys(req.query);
@@ -34,7 +34,7 @@ router
       ? res.send(celebDetails)
       : res.status(404).send({ message: "No celebs found" });
   })
-  .post(async (req, res) => {
+  .post(auth, async (req, res) => {
     const data = req.body;
     console.log("recievd", data);
     const mongoRes = await client
@@ -45,7 +45,7 @@ router
   });
 router
   .route("/:id")
-  .get(async (req, res) => {
+  .get(auth, async (req, res) => {
     const { id } = req.params;
     const celebDetails = await getCelebById(id);
     // console.log("ones", id, celebDetails);
@@ -61,7 +61,7 @@ router
 
     res.send(mongoResponse);
   })
-  .put(async (req, res) => {
+  .put(auth, async (req, res) => {
     const { id } = req.params;
     //console.log("updateid", id, req.body);
     const mongoResponse = await updateCelebById(id, req);
