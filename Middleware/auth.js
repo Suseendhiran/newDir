@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const auth = (req, res, next) => {
   try {
-    const token = req.header("x-auth-token");
+    const token = req.header("Authorization");
     jwt.verify(token, process.env.JWT_KEY);
     next();
   } catch (err) {
