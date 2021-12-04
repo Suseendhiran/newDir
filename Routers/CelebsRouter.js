@@ -30,10 +30,7 @@ router
     //   : celebrities;
     const celebDetails = await findQueryFilter(req.query);
     celebDetails.length
-      ? res.send({
-          celebrity: celebDetails,
-          message: "Celebrity Successfully Added",
-        })
+      ? res.send(celebDetails)
       : res.status(404).send({ message: "No celebs found" });
   })
   .post(auth, async (req, res) => {
