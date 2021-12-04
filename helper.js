@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 async function updateCelebById(id, req) {
   delete req.body._id;
-
+  console.log("new", id);
   return await client
     .db("guvi")
     .collection("celebs")

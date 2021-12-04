@@ -6,7 +6,6 @@ import { auth } from "../Middleware/auth.js";
 const router = express.Router();
 
 async function findQueryFilter(filters) {
-  console.log("filters", filters);
   let filterObject = { ...filters };
   if (Object.keys(filters).length) {
     return await client
@@ -36,12 +35,14 @@ router
   })
   .post(auth, async (req, res) => {
     const data = req.body;
-    console.log("recievd", data);
     const mongoRes = await client
       .db("guvi")
       .collection("celebs")
       .insertOne(data);
-    res.send(mongoRes);
+
+    if (mongoRes.acknowledged) {
+      res.send({ status: mongoRes, message: "Celebrity Successfully Added" });
+    }
   });
 router
   .route("/:id")
@@ -59,15 +60,22 @@ router
     const { id } = req.params;
     const mongoResponse = await deleteCelebById(id);
 
-    res.send(mongoResponse);
+    res.send(mongoResponse, {
+      message: "Celebrity Successfully Deleted",
+    });
   })
   .put(auth, async (req, res) => {
     const { id } = req.params;
-    //console.log("updateid", id, req.body);
+    // console.log("updateid", id, req.body);
     const mongoResponse = await updateCelebById(id, req);
-    if (mongoResponse.modifiedCount > 0) {
+
+    if (mongoResponse.acknowledged) {
       let updatedRecord = await getCelebById(id);
-      res.send(updatedRecord);
+
+      res.send({
+        celebrity: updatedRecord,
+        message: "Celebrity info Succesfully Updated",
+      });
     } else {
       res.send({ message: "No record found" });
     }
