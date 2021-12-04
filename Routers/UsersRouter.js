@@ -40,7 +40,8 @@ router.route("/login").post(async (req, res) => {
     res.status(401).send({ message: "Account doesn't exist" });
     return;
   }
-  const matchpassword = bcrypt.compare(password, userDetails.password);
+  const matchpassword = await bcrypt.compare(password, userDetails.password);
+  console.log("matched", matchpassword, password);
   if (matchpassword) {
     const token = jwt.sign(
       { id: userDetails._id, userName: userDetails.userName },
