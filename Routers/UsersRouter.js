@@ -34,7 +34,7 @@ router.route("/login").post(async (req, res) => {
   const { userName, password } = req.body;
   const userDetails = await getUserByUserName(userName);
   if (!userDetails) {
-    res.send({ message: "Account doesn't exist" });
+    res.status(401).send({ message: "Account doesn't exist" });
     return;
   }
   const matchpassword = bcrypt.compare(password, userDetails.password);
