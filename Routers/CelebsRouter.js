@@ -9,12 +9,16 @@ async function findQueryFilter(filters) {
   let filterObject = { ...filters };
   if (Object.keys(filters).length) {
     return await client
-      .db("guvi")
+      .db("celebrities")
       .collection("celebs")
       .find({ ...filterObject })
       .toArray();
   } else {
-    return await client.db("guvi").collection("celebs").find({}).toArray();
+    return await client
+      .db("celebrities")
+      .collection("celebs")
+      .find({})
+      .toArray();
   }
 }
 router
@@ -36,7 +40,7 @@ router
   .post(auth, async (req, res) => {
     const data = req.body;
     const mongoRes = await client
-      .db("guvi")
+      .db("celebrities")
       .collection("celebs")
       .insertOne(data);
 
