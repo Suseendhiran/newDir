@@ -30,11 +30,18 @@ async function createUser(userDetails) {
     .collection("users")
     .insertOne(userDetails);
 }
-async function getUserByUserName(userName) {
+async function getUserByEmail(email) {
   return await client
     .db("celebrities")
     .collection("users")
-    .findOne({ userName: userName });
+    .findOne({ email: email });
+}
+
+async function getUserById(id) {
+  return await client
+    .db("celebrities")
+    .collection("users")
+    .findOne({ _id: ObjectId(id) });
 }
 async function generateHashPassword(password) {
   let saltRounds = 10;
@@ -43,11 +50,30 @@ async function generateHashPassword(password) {
   return hashedPassword;
 }
 
+async function resetPassword(password, id) {
+  return await client
+    .db("celebrities")
+    .collection("users")
+    .updateOne(
+      { _id: ObjectId(id) },
+      { $set: { password: password, resetToken: null } }
+    );
+}
+
+async function updateResetToken(token, id) {
+  return await client
+    .db("celebrities")
+    .collection("users")
+    .updateOne({ _id: ObjectId(id) }, { $set: { resetToken: token } });
+}
 export {
   updateCelebById,
   deleteCelebById,
   getCelebById,
   createUser,
   generateHashPassword,
-  getUserByUserName,
+  getUserByEmail,
+  resetPassword,
+  updateResetToken,
+  getUserById,
 };
